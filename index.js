@@ -211,7 +211,6 @@ app.post('/admin/addContent', async (req, res)=>{
     // const heroBody = req.body;
 
     const {
-        title,
         subHead,
         type,
         image,
@@ -238,6 +237,8 @@ app.post('/admin/addContent', async (req, res)=>{
         createdBy,
         adminId
     } = req.body
+
+    const title = req.body.title.toLowerCase()
 
     const isAdmin = AdminModel.findOne({email: adminId})
 
@@ -307,6 +308,35 @@ app.get('/admin/getContent', async (req, res)=>{
         // console.log('my data :', myData)
 
         res.send({myType: 'Success',message: 'Getting Data Successful', data: myData})
+    }
+    catch(error){
+        // res.send({myType: 'Error',message: error.message})
+        console.log(error.message)
+    }
+})
+
+app.post('/admin/getSearchedContent', async (req, res)=>{
+    console.log('/admin/getSearchedContent hitted')
+
+    
+    const searchText =req.body.searchText.toLowerCase()
+    // console.log(searchText)
+
+    try{
+        const myData = await HeroSectionModel.find()
+
+        let dataToSend = []
+
+        for(let i = 0 ; i < myData.length ; i++){
+            // console.log(myData[i].title)
+            if(myData[i].title.includes(searchText)){
+                dataToSend.push(myData[i])
+            }
+        }
+
+        // console.log('my data :', dataToSend.length)
+
+        res.send({myType: 'Success',message: 'Getting Data Successful', data: dataToSend})
     }
     catch(error){
         // res.send({myType: 'Error',message: error.message})
